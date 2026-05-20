@@ -17,6 +17,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "AditBunta Diecaster | Inventory & Dashboard",
   description: "Modern inventory management & business intelligence for diecast collectors.",
+  icons: {
+    icon: '/logobunta.png',
+    apple: '/logobunta.png',
+  },
 };
 
 export default async function RootLayout({

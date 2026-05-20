@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx supabase *)",
+      "Bash(npx next *)",
+      "Bash(del \"c:\\\\Undip\\\\ABCDE\\\\Partisihidup\\\\middleware.ts\")"
+    ]
+  }
+}

@@ -6,38 +6,35 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 
 export async function login(formData: FormData) {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   const identity = formData.get('identity') as string
   const password = formData.get('password') as string
 
-  // Handle hardcoded Admin login
-  if (identity === 'admin' && password === 'Zorro2026!') {
-    const cookieStore = await cookies()
-    cookieStore.set('user-role', 'admin', {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-      sameSite: 'lax',
-      httpOnly: false, // Allow client-side reading for Navbar
-    })
-    
-    revalidatePath('/', 'layout')
-    redirect('/dashboard')
+  // Resolve username → email if identity doesn't look like an email
+  let email = identity.trim()
+  if (!email.includes('@')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('username', email)
+      .single()
+    if (profile?.email) {
+      email = profile.email
+    } else {
+      return redirect('/login?error=' + encodeURIComponent('Username tidak ditemukan'))
+    }
   }
 
-  // Handle standard User login
-  const data = {
-    email: identity.trim(),
-    password: password,
-  }
-
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
     return redirect('/login?error=' + encodeURIComponent(error.message))
   }
 
-  const cookieStore = await cookies()
-  cookieStore.set('user-role', 'user', {
+  const role = data.user?.user_metadata?.role === 'admin' ? 'admin' : 'user'
+
+  cookieStore.set('user-role', role, {
     path: '/',
     maxAge: 60 * 60 * 24 * 7,
     sameSite: 'lax',
@@ -45,24 +42,29 @@ export async function login(formData: FormData) {
   })
 
   revalidatePath('/', 'layout')
-  redirect('/store')
+  redirect(role === 'admin' ? '/dashboard' : '/store')
 }
 
 export async function signup(formData: FormData) {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const username = formData.get('username') as string
+  const phone = formData.get('phone') as string
+  const address = formData.get('address') as string
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
-        username: username,
+        username,
+        phone: phone || '',
+        address: address || '',
       },
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://partisihidup.vercel.app'}/auth/callback`,
     },
@@ -77,10 +79,10 @@ export async function signup(formData: FormData) {
 }
 
 export async function signOut() {
-  const supabase = await createClient()
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
   await supabase.auth.signOut()
   
-  const cookieStore = await cookies()
   cookieStore.delete('user-role')
 
   revalidatePath('/', 'layout')

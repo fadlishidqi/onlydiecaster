@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #FFD600;
-  --color-secondary: #A3E635;
-  --color-accent: #FB923C;
+  --color-primary: #FDE047;
+  --color-secondary: #00FF9F;
+  --color-accent: #FF006E;
+  --color-electric: #0066FF;
   --color-bg-page: #FAF8F5;
   
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
+  --radius-sm: 2px;
+  --radius-md: 4px;
 }
 
 :root {
@@ -15,28 +16,33 @@
   --foreground: #000000;
 }
 
+html {
+  font-size: 14px;
+}
+
 body {
   background-color: var(--background);
   color: #000000;
   font-family: var(--font-sans), ui-sans-serif, system-ui;
+  overflow-x: hidden;
 }
 
 @layer components {
   /* Neo-Brutalism Utility Classes */
   .neo-brutal-card {
-    @apply bg-white border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] text-black transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)];
+    @apply bg-white border-[3px] border-black shadow-[4px_4px_0px_0px_#000] text-black transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] rounded-[4px];
   }
   
   .neo-brutal-btn-yellow {
-    @apply bg-[#FFD600] border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black font-black uppercase tracking-wider px-6 py-3 transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none;
+    @apply bg-[#FDE047] border-[3px] border-black shadow-[4px_4px_0px_0px_#000] text-black font-black uppercase tracking-wider px-6 py-3 transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none rounded-[4px];
   }
 
   .neo-brutal-btn-mint {
-    @apply bg-[#A3E635] border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black font-black uppercase tracking-wider px-6 py-3 transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none;
+    @apply bg-[#00FF9F] border-[3px] border-black shadow-[4px_4px_0px_0px_#000] text-black font-black uppercase tracking-wider px-6 py-3 transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none rounded-[4px];
   }
 
   .neo-brutal-nav-item {
-    @apply font-bold border-2 border-transparent px-3 py-1 rounded-lg text-black hover:border-black hover:bg-[#FFD600] transition-all;
+    @apply font-black uppercase border-2 border-transparent px-3 py-1 rounded-[4px] text-black hover:border-black hover:bg-[#FDE047] transition-all;
   }
 
   @keyframes scroll {
@@ -44,20 +50,57 @@ body {
     100% { transform: translateX(-50%); }
   }
 
-  @keyframes drive {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(200%); }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(2deg); }
+  }
+
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  @keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
 
   .animate-scroll {
     animation: scroll 30s linear infinite;
   }
 
-  .animate-drive {
-    animation: drive 15s linear infinite;
-  }
-
   .animate-scroll-fast {
     animation: scroll 12s linear infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 3s ease-in-out infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out forwards;
+  }
+
+  @keyframes car-vibe {
+    0%,100% { transform: translateY(0px) rotate(0deg); }
+    25%      { transform: translateY(-2px) rotate(-0.3deg); }
+    75%      { transform: translateY(1px)  rotate(0.2deg); }
+  }
+
+  /* Neo-Brutalism Global Overrides */
+  * {
+    @apply border-black;
+  }
+
+  h1, h2, h3 {
+    @apply font-black tracking-tighter leading-[1.1] uppercase italic;
+  }
+
+  input, select, textarea {
+    @apply rounded-[4px] border-[3px] border-black shadow-[4px_4px_0px_0px_#000] focus:translate-x-[1px] focus:translate-y-[1px] focus:shadow-[2px_2px_0px_0px_#000] transition-all outline-none font-black px-4 py-2;
   }
 }
